@@ -3,14 +3,22 @@ package com.nkatha99.shoping_app
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.nkatha99.shoping_app.databinding.ActivityMainBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
+    lateinit var binding: ActivityMainBinding
+    lateinit var productsAdapter: ProductsAdapter
+    var itemProduct :List<Product> = emptyList()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        productsAdapter = ProductsAdapter(emptyList())
+        binding.rvProducts.adapter = productsAdapter
     }
 
     override fun onResume() {
@@ -25,6 +33,14 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call<ProductsResponse>, response: Response<ProductsResponse>) {
                 if(response.isSuccessful){
                     var products = response.body()?.products
+
+                    var productsAdapter=ProductsAdapter(products?: emptyList())
+                    binding.rvProducts.layoutManager= LinearLayoutManager(this@MainActivity)
+                    binding.rvProducts.adapter=productsAdapter
+
+
+
+
                     Toast.makeText(baseContext, "fetched ${products?.size} products", Toast.LENGTH_LONG).show()
                 }
                 else{
